@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUCCA DOLLZ — Free Mint Whitelist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="particles"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <span class="nav-logo">🎎</span>
+            <span class="nav-title">PUCCA DOLLZ</span>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#hero">Home</a>
+            <a href="#about">About</a>
+            <a href="#info">Info</a>
+            <a href="#whitelist">Whitelist</a>
+        </div>
+        <div class="nav-right">
+            <!-- CHANGE: Replace Connect X button with just a link to the X page -->
+            <a href="https://x.com/PuccaDollz" target="_blank" class="btn btn-x-connect">
+                <svg class="x-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                @PuccaDollz
+            </a>
+            <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO — keep exactly as is -->
+    <section class="hero" id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="sparkle sparkle-1">✦</div>
+            <div class="sparkle sparkle-2">✦</div>
+            <div class="sparkle sparkle-3">✦</div>
+            <div class="sparkle sparkle-4">✦</div>
+            <h1 class="hero-title">
+                <span class="title-line">PUCCA</span>
+                <span class="title-line title-accent">DOLLZ</span>
+            </h1>
+            <p class="hero-tagline">Cute but deadly. Collect them all.</p>
+            <div class="supply-badge" onclick="this.classList.toggle('wiggle')">
+                <span class="supply-number">3,000</span>
+                <span class="supply-label">DOLLZ</span>
+            </div>
+            <p class="hero-mint-info">✦ Free Mint — Join the Whitelist ✦</p>
+            <div class="hero-cta">
+                <a href="#whitelist" class="btn btn-primary btn-glow">Join the Whitelist</a>
+                <a href="#about" class="btn btn-outline">Learn More</a>
+            </div>
+            <p class="hero-boop">psst... boop one 👇</p>
+        </div>
+        <div class="character-lineup">
+            <div class="character" onclick="boopCharacter(this)" data-name="Kira">
+                <div class="character-body">😈</div>
+                <div class="character-boop">boop!</div>
+            </div>
+            <div class="character" onclick="boopCharacter(this)" data-name="Luna">
+                <div class="character-body">👹</div>
+                <div class="character-boop">hehe!</div>
+            </div>
+            <div class="character" onclick="boopCharacter(this)" data-name="Miko">
+                <div class="character-body">🎎</div>
+                <div class="character-boop">yay!</div>
+            </div>
+            <div class="character" onclick="boopCharacter(this)" data-name="Ryu">
+                <div class="character-body">👺</div>
+                <div class="character-boop">rawr!</div>
+            </div>
+            <div class="character" onclick="boopCharacter(this)" data-name="Suki">
+                <div class="character-body">🥷</div>
+                <div class="character-boop">ninja!</div>
+            </div>
+            <div class="character" onclick="boopCharacter(this)" data-name="Yuki">
+                <div class="character-body">💀</div>
+                <div class="character-boop">spooky!</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT — keep exactly as is -->
+    <section class="about" id="about">
+        <div class="section-header">
+            <h2 class="section-title">What are <span class="text-red">PUCCA DOLLZ</span>?</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p>PUCCA DOLLZ are 3,000 unique hand-crafted collectibles living on the blockchain. Each one is adorable, mischievous, and ready to cause chaos in your wallet.</p>
+                <p>Free mint. No catch. Just vibes. Complete the tasks and secure your spot on the whitelist. 🔥</p>
+            </div>
+            <div class="about-visual">
+                <div class="rotating-doll">🎎</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFO GRID — UPDATE VALUES -->
+    <section class="info" id="info">
+        <div class="section-header">
+            <h2 class="section-title">The <span class="text-green">Details</span></h2>
+            <div class="title-underline green"></div>
+        </div>
+        <div class="info-grid">
+            <div class="info-card" data-tilt>
+                <span class="info-label">Supply</span>
+                <span class="info-value">3,000</span>
+            </div>
+            <div class="info-card" data-tilt>
+                <span class="info-label">Mint Price</span>
+                <span class="info-value text-green">FREE</span>
+            </div>
+            <div class="info-card" data-tilt>
+                <span class="info-label">Chain</span>
+                <span class="info-value">Robinhood</span>
+            </div>
+            <div class="info-card" data-tilt>
+                <span class="info-label">Launchpad</span>
+                <span class="info-value">OpenSea</span>
+            </div>
+            <div class="info-card" data-tilt>
+                <span class="info-label">Ecosystem</span>
+                <span class="info-value text-red">$PUCCA</span>
+            </div>
+            <div class="info-card" data-tilt>
+                <span class="info-label">Mint Date</span>
+                <span class="info-value">TBA</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- COUNTDOWN — keep as is -->
+    <section class="countdown-section">
+        <div class="countdown-header">
+            <span class="countdown-icon">⏳</span>
+            <h3>Applications close in</h3>
+        </div>
+        <div class="countdown" id="countdown">
+            <div class="countdown-unit">
+                <span class="countdown-number" id="days">00</span>
+                <span class="countdown-label">DAYS</span>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+                <span class="countdown-number" id="hours">00</span>
+                <span class="countdown-label">HRS</span>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+                <span class="countdown-number" id="minutes">00</span>
+                <span class="countdown-label">MIN</span>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+                <span class="countdown-number" id="seconds">00</span>
+                <span class="countdown-label">SEC</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHITELIST SECTION — MAJOR CHANGES -->
+    <section class="whitelist" id="whitelist">
+        <div class="section-header">
+            <h2 class="section-title glitch" data-text="Join the DOLLZ">Join the <span class="text-red">DOLLZ</span></h2>
+            <div class="title-underline red"></div>
+            <p class="section-subtitle">Complete the tasks and secure your spot. Free mint, powered by $PUCCA.</p>
+        </div>
+
+        <!-- Tasks List — ALWAYS VISIBLE, no gating -->
+        <div class="tasks-container active" id="tasksContainer">
+            <!-- Task 1: X Username (manual input) -->
+            <div class="task-card" id="task1" data-task="username">
+                <div class="task-number">1</div>
+                <div class="task-content">
+                    <h3>Enter your X username</h3>
+                    <p>Type your X (Twitter) handle so we can verify your tasks.</p>
+                    <div class="task-input-group">
+                        <input type="text" class="task-input" id="xUsernameInput" placeholder="@yourusername">
+                        <button class="btn btn-verify" onclick="confirmUsername()">Confirm</button>
+                    </div>
+                </div>
+                <div class="task-check">
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- Task 2: Follow -->
+            <div class="task-card" id="task2" data-task="follow">
+                <div class="task-number">2</div>
+                <div class="task-content">
+                    <h3>Follow @PuccaDollz</h3>
+                    <p>Follow us on X to stay in the loop.</p>
+                    <button class="btn btn-task" onclick="doTask('follow')">
+                        <svg class="x-icon" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        Follow on X
+                    </button>
+                </div>
+                <div class="task-check">
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- Task 3: Like & Repost -->
+            <div class="task-card" id="task3" data-task="engage">
+                <div class="task-number">3</div>
+                <div class="task-content">
+                    <h3>Like and repost the pinned post</h3>
+                    <p>Show some love to our pinned tweet.</p>
+                    <div class="task-buttons">
+                        <button class="btn btn-task btn-small" onclick="doTask('like')">♥ Like</button>
+                        <button class="btn btn-task btn-small" onclick="doTask('repost')">🔄 Repost</button>
+                        <a href="#" class="btn btn-link" target="_blank">View post</a>
+                    </div>
+                </div>
+                <div class="task-check">
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- Task 4: Tag Friends -->
+            <div class="task-card" id="task4" data-task="tag">
+                <div class="task-number">4</div>
+                <div class="task-content">
+                    <h3>Tag a friend or two on the pinned tweet and drop your comment</h3>
+                    <p>Reply under the pinned post and tag at least one friend, then paste your reply's link.</p>
+                    <button class="btn btn-task" onclick="window.open('#', '_blank')">
+                        <svg class="x-icon" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        Go to pinned post
+                    </button>
+                    <div class="task-input-group">
+                        <input type="url" class="task-input" id="replyUrl" placeholder="https://x.com/you/status/...">
+                        <button class="btn btn-verify" onclick="verifyReply()">Verify</button>
+                    </div>
+                </div>
+                <div class="task-check">
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- Task 5: Wallet -->
+            <div class="task-card" id="task5" data-task="wallet">
+                <div class="task-number">5</div>
+                <div class="task-content">
+                    <h3>Add your EVM wallet</h3>
+                    <p>Enter your wallet address to receive your PUCCA DOLLZ.</p>
+                    <div class="task-input-group">
+                        <input type="text" class="task-input" id="walletInput" placeholder="0x...">
+                        <button class="btn btn-verify" onclick="submitWallet()">Submit</button>
+                    </div>
+                </div>
+                <div class="task-check">
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- Submit All -->
+            <button class="btn btn-submit-all" id="submitAll" onclick="submitWhitelist()" disabled>
+                🔥 Submit Whitelist Application 🔥
+            </button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">🎎 PUCCA DOLLZ</div>
+            <div class="footer-links">
+                <a href="https://x.com/PuccaDollz" target="_blank" class="footer-link">
+                    <svg class="x-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+            </div>
+            <p class="footer-copy">© 2026 PUCCA DOLLZ. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">
+        <span id="toastMsg"></span>
+    </div>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-emoji">🎉</div>
+            <h2>You're In!</h2>
+            <p>Your PUCCA DOLLZ whitelist application has been submitted successfully.</p>
+            <p class="modal-sub">We'll notify you on X when minting goes live. Stay tuned! 🔥</p>
+            <button class="btn btn-primary" onclick="closeModal()">LFG! 🚀</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

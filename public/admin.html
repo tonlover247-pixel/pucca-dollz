@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUCCA DOLLZ Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-dark:#0a0a0a;--bg-card:#111111;--bg-card-hover:#1a1a1a;
+  --red:#ff1a1a;--red-dark:#cc0000;--red-glow:rgba(255,26,26,0.4);
+  --green:#00ff6a;--green-dark:#00cc55;--green-glow:rgba(0,255,106,0.3);
+  --white:#ffffff;--gray-100:#f0f0f0;--gray-300:#999999;--gray-500:#666666;--gray-700:#333333;--border:#2a2a2a;
+  --font-display:'Bangers',cursive;--font-body:'Outfit',sans-serif;
+  --radius:16px;
+}
+html{font-size:16px}
+body{background:var(--bg-dark);color:var(--gray-100);font-family:var(--font-body);min-height:100vh;line-height:1.5}
+
+/* ── Password Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;width:min(400px,90vw);text-align:center;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.modal-box h2{font-family:var(--font-display);font-size:1.8rem;color:var(--red);margin-bottom:.5rem;letter-spacing:1px}
+.modal-box p{color:var(--gray-300);font-size:.9rem;margin-bottom:1.5rem}
+.modal-input{width:100%;padding:.85rem 1rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:1rem;outline:none;transition:border .2s}
+.modal-input:focus{border-color:var(--red)}
+.modal-input.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.modal-btn{margin-top:1rem;width:100%;padding:.85rem;background:var(--red);color:var(--white);border:none;border-radius:10px;font-family:var(--font-body);font-weight:700;font-size:1rem;cursor:pointer;transition:background .2s,box-shadow .2s}
+.modal-btn:hover{background:var(--red-dark);box-shadow:0 0 20px var(--red-glow)}
+.modal-error{color:var(--red);font-size:.8rem;margin-top:.75rem;min-height:1.2em}
+
+/* ── Layout ── */
+.app{display:none;max-width:1280px;margin:0 auto;padding:1.5rem}
+.header{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.header-title{font-family:var(--font-display);font-size:2.2rem;letter-spacing:1.5px;color:var(--white);flex:1 1 auto;white-space:nowrap}
+.header-title span{color:var(--red)}
+
+/* ── Stat Cards ── */
+.stats{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.stat-card{flex:1 1 180px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;transition:background .2s,border-color .2s}
+.stat-card:hover{background:var(--bg-card-hover);border-color:var(--gray-700)}
+.stat-label{font-size:.8rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.stat-value{font-family:var(--font-display);font-size:2.4rem;margin-top:.25rem}
+.stat-value.red{color:var(--red)}
+.stat-value.green{color:var(--green)}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem;align-items:center}
+.search-box{flex:1 1 280px;position:relative}
+.search-box input{width:100%;padding:.75rem 1rem .75rem 2.6rem;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--green)}
+.search-box .icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-500);font-size:1rem;pointer-events:none}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.1rem;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);color:var(--gray-100);font-family:var(--font-body);font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s,box-shadow .2s}
+.btn:hover{background:var(--bg-card-hover);border-color:var(--gray-500)}
+.btn.green:hover{border-color:var(--green);box-shadow:0 0 12px var(--green-glow)}
+.btn.red:hover{border-color:var(--red);box-shadow:0 0 12px var(--red-glow)}
+.btn .toast-msg{font-size:.75rem;color:var(--green);margin-left:.3rem;animation:fadeToast 1.6s ease forwards}
+@keyframes fadeToast{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+
+/* ── Live Badge ── */
+.live-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .75rem;background:rgba(0,255,106,.08);border:1px solid var(--green-dark);border-radius:20px;font-size:.75rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px}
+.live-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--green-glow)}50%{opacity:.7;box-shadow:0 0 0 6px transparent}}
+
+/* ── Table ── */
+.table-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-scroll{overflow-x:auto;max-height:70vh;overflow-y:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+thead{position:sticky;top:0;z-index:2}
+th{background:var(--bg-dark);padding:.8rem 1rem;text-align:left;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-500);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--gray-300);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--bg-card-hover)}
+.cell-num{color:var(--gray-500);font-weight:600;font-size:.8rem}
+.cell-user{color:var(--white);font-weight:700}
+.cell-user a{color:var(--white);text-decoration:none;transition:color .15s}
+.cell-user a:hover{color:var(--red)}
+.cell-wallet{font-family:'Courier New',monospace;font-size:.82rem;color:var(--gray-300);word-break:break-all;max-width:180px}
+.cell-link a{color:var(--green);font-size:.82rem;text-decoration:none;transition:color .15s}
+.cell-link a:hover{text-decoration:underline}
+.cell-date{font-size:.8rem;color:var(--gray-500);white-space:nowrap}
+.tasks{display:flex;gap:.35rem;flex-wrap:wrap}
+.task-chip{display:inline-flex;align-items:center;gap:.2rem;padding:.15rem .5rem;border-radius:6px;font-size:.7rem;font-weight:600;text-transform:capitalize}
+.task-chip.done{background:rgba(0,255,106,.1);color:var(--green)}
+.task-chip.miss{background:rgba(255,26,26,.08);color:var(--gray-500)}
+
+/* ── Empty & Loading ── */
+.empty-state,.loading-state{text-align:center;padding:4rem 2rem}
+.empty-state .emoji{font-size:3rem;margin-bottom:1rem}
+.empty-state h3{font-family:var(--font-display);font-size:1.5rem;color:var(--gray-500);margin-bottom:.5rem}
+.empty-state p{color:var(--gray-500);font-size:.9rem}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{color:var(--gray-500);font-size:.9rem}
+
+/* ── Pagination ── */
+.pagination{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:1.25rem;flex-wrap:wrap}
+.page-btn{padding:.45rem .85rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--gray-300);font-family:var(--font-body);font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.page-btn:hover:not(:disabled){background:var(--bg-card-hover);border-color:var(--gray-500);color:var(--white)}
+.page-btn.active{background:var(--red);border-color:var(--red);color:var(--white)}
+.page-btn:disabled{opacity:.3;cursor:not-allowed}
+.page-info{font-size:.8rem;color:var(--gray-500);margin:0 .5rem}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .header-title{font-size:1.6rem}
+  .stat-card{padding:1rem}
+  .stat-value{font-size:1.8rem}
+  .toolbar{gap:.5rem}
+  .btn{padding:.55rem .8rem;font-size:.78rem}
+  .app{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <h2>🎎 PUCCA DOLLZ</h2>
+    <p>Enter admin password to continue</p>
+    <input type="password" class="modal-input" id="authInput" placeholder="Password" autocomplete="off">
+    <button class="modal-btn" id="authBtn">Unlock Dashboard</button>
+    <div class="modal-error" id="authError"></div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">🎎 <span>PUCCA DOLLZ</span> Admin</div>
+    <div class="live-badge"><span class="live-dot"></span> Live</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Total Entries</div>
+      <div class="stat-value red" id="statTotal">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Today's Entries</div>
+      <div class="stat-value green" id="statToday">—</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by username or wallet…">
+    </div>
+    <button class="btn green" onclick="copyCSV(this)">📋 Copy CSV</button>
+    <button class="btn green" onclick="downloadCSV()">⬇️ Download CSV</button>
+    <button class="btn red" onclick="copyWallets(this)">📋 Copy All Wallets</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-scroll" id="tableScroll">
+      <!-- Loading -->
+      <div class="loading-state" id="loadingState">
+        <div class="spinner"></div>
+        <p>Loading entries…</p>
+      </div>
+      <!-- Empty -->
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="emoji">🎎</div>
+        <h3>No entries yet</h3>
+        <p>Whitelist entries will appear here once submitted.</p>
+      </div>
+      <!-- Table -->
+      <table id="dataTable" style="display:none">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>X Username</th>
+            <th>Wallet</th>
+            <th>Reply URL</th>
+            <th>Submitted At</th>
+            <th>Tasks</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const PER_PAGE = 25;
+let allEntries = [];
+let filtered = [];
+let currentPage = 1;
+
+/* ── Auth ── */
+const modal = document.getElementById('authModal');
+const authInput = document.getElementById('authInput');
+const authBtn = document.getElementById('authBtn');
+const authError = document.getElementById('authError');
+
+function getKey() { return sessionStorage.getItem('admin_key'); }
+function setKey(k) { sessionStorage.setItem('admin_key', k); }
+
+if (getKey()) { unlock(); } 
+
+authBtn.addEventListener('click', tryAuth);
+authInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
+
+async function tryAuth() {
+  const pw = authInput.value.trim();
+  if (!pw) { authInput.classList.add('shake'); setTimeout(() => authInput.classList.remove('shake'), 400); return; }
+  authError.textContent = '';
+  try {
+    const res = await fetch('/api/admin/entries', { headers: { 'x-admin-key': pw } });
+    if (!res.ok) { authError.textContent = 'Invalid password'; authInput.classList.add('shake'); setTimeout(() => authInput.classList.remove('shake'), 400); return; }
+    setKey(pw);
+    const data = await res.json();
+    unlock(data);
+  } catch (e) { authError.textContent = 'Connection error'; }
+}
+
+function unlock(data) {
+  modal.style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  if (data) { handleData(data); } else { fetchEntries(); }
+}
+
+/* ── Fetch ── */
+async function fetchEntries() {
+  showLoading(true);
+  try {
+    const res = await fetch('/api/admin/entries', { headers: { 'x-admin-key': getKey() } });
+    if (!res.ok) { sessionStorage.removeItem('admin_key'); location.reload(); return; }
+    handleData(await res.json());
+  } catch (e) {
+    document.getElementById('loadingState').innerHTML = '<p style="color:var(--red)">Failed to load data.</p>';
+  }
+}
+
+function handleData(data) {
+  allEntries = Array.isArray(data) ? data : [];
+  allEntries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  updateStats();
+  applyFilter();
+  showLoading(false);
+}
+
+/* ── Stats ── */
+function updateStats() {
+  document.getElementById('statTotal').textContent = allEntries.length.toLocaleString();
+  const today = new Date().toDateString();
+  const todayCount = allEntries.filter(e => new Date(e.created_at).toDateString() === today).length;
+  document.getElementById('statToday').textContent = todayCount.toLocaleString();
+}
+
+/* ── Search ── */
+document.getElementById('searchInput').addEventListener('input', function () {
+  currentPage = 1;
+  applyFilter();
+});
+
+function applyFilter() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  filtered = q ? allEntries.filter(e =>
+    (e.x_username || '').toLowerCase().includes(q) ||
+    (e.wallet || '').toLowerCase().includes(q)
+  ) : [...allEntries];
+  renderTable();
+  renderPagination();
+}
+
+/* ── Render ── */
+function showLoading(show) {
+  document.getElementById('loadingState').style.display = show ? '' : 'none';
+}
+
+const TASK_LABELS = ['follow', 'like', 'repost', 'tag', 'wallet'];
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const table = document.getElementById('dataTable');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = '';
+    document.getElementById('pagination').style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  table.style.display = '';
+
+  const start = (currentPage - 1) * PER_PAGE;
+  const page = filtered.slice(start, start + PER_PAGE);
+
+  tbody.innerHTML = page.map((e, i) => {
+    const num = start + i + 1;
+    const user = escH(e.x_username || '—');
+    const userLink = e.x_username ? `<a href="https://x.com/${encodeURIComponent(e.x_username.replace(/^@/, ''))}" target="_blank" rel="noopener">@${user}</a>` : '—';
+    const wallet = escH(e.wallet || '—');
+    const walletShort = wallet.length > 16 ? wallet.slice(0, 8) + '…' + wallet.slice(-6) : wallet;
+    const replyLink = e.reply_url ? `<a href="${escH(e.reply_url)}" target="_blank" rel="noopener">View ↗</a>` : '—';
+    const date = e.created_at ? fmtDate(e.created_at) : '—';
+    const tasks = TASK_LABELS.map(t => {
+      const done = e.tasks && e.tasks[t];
+      return `<span class="task-chip ${done ? 'done' : 'miss'}">${done ? '✓' : '✗'} ${t}</span>`;
+    }).join('');
+    return `<tr>
+      <td class="cell-num">${num}</td>
+      <td class="cell-user">${userLink}</td>
+      <td class="cell-wallet" title="${wallet}">${walletShort}</td>
+      <td class="cell-link">${replyLink}</td>
+      <td class="cell-date">${date}</td>
+      <td><div class="tasks">${tasks}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const pg = document.getElementById('pagination');
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (total <= 1) { pg.style.display = 'none'; return; }
+  pg.style.display = 'flex';
+
+  let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})">← Prev</button>`;
+  const range = pageRange(currentPage, total);
+  range.forEach(p => {
+    if (p === '…') { html += `<span class="page-info">…</span>`; }
+    else { html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`; }
+  });
+  html += `<button class="page-btn" ${currentPage === total ? 'disabled' : ''} onclick="goPage(${currentPage + 1})">Next →</button>`;
+  html += `<span class="page-info">${filtered.length} entries</span>`;
+  pg.innerHTML = html;
+}
+
+function goPage(p) {
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (p < 1 || p > total) return;
+  currentPage = p;
+  renderTable();
+  renderPagination();
+  document.getElementById('tableScroll').scrollTop = 0;
+}
+
+function pageRange(cur, total) {
+  const delta = 2;
+  const range = [];
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= cur - delta && i <= cur + delta)) range.push(i);
+    else if (range[range.length - 1] !== '…') range.push('…');
+  }
+  return range;
+}
+
+/* ── Export ── */
+function entriesToCSV() {
+  const header = ['#','X Username','Wallet','Reply URL','Submitted At','Follow','Like','Repost','Tag','Wallet Task'];
+  const rows = filtered.map((e, i) => [
+    i + 1,
+    e.x_username || '',
+    e.wallet || '',
+    e.reply_url || '',
+    e.created_at || '',
+    e.tasks?.follow ? 'Yes' : 'No',
+    e.tasks?.like ? 'Yes' : 'No',
+    e.tasks?.repost ? 'Yes' : 'No',
+    e.tasks?.tag ? 'Yes' : 'No',
+    e.tasks?.wallet ? 'Yes' : 'No',
+  ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+  return [header.join(','), ...rows].join('\n');
+}
+
+function copyCSV(btn) {
+  navigator.clipboard.writeText(entriesToCSV()).then(() => flash(btn, 'Copied!'));
+}
+
+function downloadCSV() {
+  const blob = new Blob([entriesToCSV()], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `pucca-dollz-whitelist-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function copyWallets(btn) {
+  const wallets = filtered.map(e => e.wallet).filter(Boolean).join('\n');
+  navigator.clipboard.writeText(wallets).then(() => flash(btn, 'Copied!'));
+}
+
+function flash(btn, msg) {
+  const span = document.createElement('span');
+  span.className = 'toast-msg';
+  span.textContent = msg;
+  btn.appendChild(span);
+  setTimeout(() => span.remove(), 1600);
+}
+
+/* ── Helpers ── */
+function escH(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+    d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+</script>
+</body>
+</html>
