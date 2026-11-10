@@ -1,11 +1,10 @@
-/* ============================================
-   PUCCA DOLLZ — Whitelist App
-   Manual X username · Supabase backend
-   ============================================ */
+/* ============================================================
+   PUCCA DOLLZ — Mochi Pop Whitelist Logic
+   Manual X handle · Supabase Backend · Interactive Boop
+   ============================================================ */
 
-// ── State ──────────────────────────────────
 const state = {
-    xUsername: null,
+    xUsername: '',
     tasks: {
         username: false,
         follow: false,
@@ -14,220 +13,204 @@ const state = {
         tag: false,
         wallet: false
     },
-    wallet: null,
-    replyUrl: null
+    replyUrl: '',
+    wallet: ''
 };
 
-// ── Particles ──────────────────────────────
-function initParticles() {
-    const container = document.getElementById('particles');
-    if (!container) return;
-    const count = window.innerWidth < 768 ? 25 : 50;
-    for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.cssText = `
-            left:${Math.random() * 100}%;
-            top:${Math.random() * 100}%;
-            width:${Math.random() * 4 + 1}px;
-            height:${Math.random() * 4 + 1}px;
-            animation-delay:${Math.random() * 6}s;
-            animation-duration:${Math.random() * 3 + 3}s;
-        `;
-        container.appendChild(p);
+const API_BASE = window.location.origin;
+
+// ─── TOAST NOTIFICATION ───
+function showToast(msg) {
+    const toast = document.getElementById('toastNotice');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2800);
+}
+
+// ─── BOOP DOLL INTERACTION ───
+function boopDoll(cardElement, customPhrase) {
+    // Remove booped state from others
+    document.querySelectorAll('.doll-card.booped').forEach(el => el.classList.remove('booped'));
+    
+    // Add animation
+    cardElement.classList.add('booped');
+
+    if (customPhrase) {
+        const speech = cardElement.querySelector('.doll-speech');
+        if (speech) speech.textContent = customPhrase;
     }
+
+    if (navigator.vibrate) {
+        try { navigator.vibrate(40); } catch (e) {}
+    }
+
+    setTimeout(() => {
+        cardElement.classList.remove('booped');
+    }, 1200);
 }
 
-// ── Navbar scroll ──────────────────────────
-function initNavbar() {
-    const navbar = document.getElementById('navbar');
-    if (!navbar) return;
-    let lastScroll = 0;
-    window.addEventListener('scroll', () => {
-        const curr = window.scrollY;
-        navbar.classList.toggle('scrolled', curr > 50);
-        navbar.classList.toggle('hidden', curr > lastScroll && curr > 200);
-        lastScroll = curr;
-    });
-}
-
-// ── Mobile menu ────────────────────────────
-function toggleMenu() {
-    const links = document.getElementById('navLinks');
-    const hamburger = document.getElementById('hamburger');
-    if (!links || !hamburger) return;
-    links.classList.toggle('active');
-    hamburger.classList.toggle('active');
-}
-
-// ── Boop characters ───────────────────────
-function boopCharacter(el) {
-    el.classList.add('booped');
-    setTimeout(() => el.classList.remove('booped'), 600);
-}
-
-// ── Countdown ──────────────────────────────
+// ─── COUNTDOWN TIMER ───
 function initCountdown() {
-    const target = new Date();
-    target.setDate(target.getDate() + 14); // 2 weeks from now
+    const deadline = new Date();
+    deadline.setDate(deadline.getDate() + 7);
+
     function tick() {
-        const diff = target - new Date();
-        if (diff <= 0) return;
-        const d = Math.floor(diff / 864e5);
-        const h = Math.floor((diff % 864e5) / 36e5);
-        const m = Math.floor((diff % 36e5) / 6e4);
-        const s = Math.floor((diff % 6e4) / 1e3);
-        const el = (id) => document.getElementById(id);
-        if (el('days')) el('days').textContent = String(d).padStart(2, '0');
-        if (el('hours')) el('hours').textContent = String(h).padStart(2, '0');
-        if (el('minutes')) el('minutes').textContent = String(m).padStart(2, '0');
-        if (el('seconds')) el('seconds').textContent = String(s).padStart(2, '0');
+        const now = new Date();
+        const diff = deadline - now;
+
+        if (diff <= 0) {
+            document.getElementById('days').textContent = '00';
+            document.getElementById('hours').textContent = '00';
+            document.getElementById('minutes').textContent = '00';
+            document.getElementById('seconds').textContent = '00';
+            return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+
+        const elD = document.getElementById('days');
+        const elH = document.getElementById('hours');
+        const elM = document.getElementById('minutes');
+        const elS = document.getElementById('seconds');
+
+        if (elD) elD.textContent = String(d).padStart(2, '0');
+        if (elH) elH.textContent = String(h).padStart(2, '0');
+        if (elM) elM.textContent = String(m).padStart(2, '0');
+        if (elS) elS.textContent = String(s).padStart(2, '0');
     }
+
     tick();
     setInterval(tick, 1000);
 }
 
-// ── Scroll reveal ──────────────────────────
-function initScrollReveal() {
-    const els = document.querySelectorAll(
-        '.section-header, .about-content, .info-card, .task-card, .countdown-section'
-    );
-    const obs = new IntersectionObserver(
-        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('revealed'); }),
-        { threshold: 0.15 }
-    );
-    els.forEach((el) => { el.classList.add('reveal'); obs.observe(el); });
-}
+// ─── TASK 1: X USERNAME ───
+function confirmUsername() {
+    const input = document.getElementById('xUsernameInput');
+    let val = (input?.value || '').trim();
 
-// ── Tilt on info cards ─────────────────────
-function initTilt() {
-    document.querySelectorAll('[data-tilt]').forEach((card) => {
-        card.addEventListener('mousemove', (e) => {
-            const r = card.getBoundingClientRect();
-            const x = ((e.clientX - r.left) / r.width - 0.5) * 10;
-            const y = ((e.clientY - r.top) / r.height - 0.5) * -10;
-            card.style.transform = `perspective(600px) rotateX(${y}deg) rotateY(${x}deg) scale(1.03)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-        });
-    });
-}
+    if (!val) {
+        showToast('Please type your X handle! ✍️');
+        return;
+    }
 
-// ── Toast ──────────────────────────────────
-function showToast(msg, type = 'info') {
-    const toast = document.getElementById('toast');
-    const toastMsg = document.getElementById('toastMsg');
-    if (!toast || !toastMsg) return;
-    toastMsg.textContent = msg;
-    toast.className = 'toast show ' + type;
-    setTimeout(() => { toast.className = 'toast'; }, 3500);
-}
+    if (val.startsWith('@')) {
+        val = val.substring(1);
+    }
 
-// ── Modal ──────────────────────────────────
-function showModal() {
-    const m = document.getElementById('successModal');
-    if (m) m.classList.add('active');
-}
-function closeModal() {
-    const m = document.getElementById('successModal');
-    if (m) m.classList.remove('active');
-}
+    if (val.length < 1 || val.length > 15 || !/^[A-Za-z0-9_]+$/.test(val)) {
+        showToast('Invalid X username (letters, numbers, _ only)');
+        return;
+    }
 
-// ── Task helpers ───────────────────────────
-function markTask(name, done) {
-    state.tasks[name] = done;
-    const card = document.querySelector(`.task-card[data-task="${name}"]`);
-    if (card) card.classList.toggle('completed', done);
+    state.xUsername = val;
+    state.tasks.username = true;
+    input.value = '@' + val;
+
+    markTaskDone('task1');
+    showToast(`Handle saved: @${val} ✅`);
     checkAllTasks();
 }
 
-function checkAllTasks() {
-    const all = Object.values(state.tasks).every(Boolean);
-    const btn = document.getElementById('submitAll');
-    if (btn) btn.disabled = !all;
-}
-
-// ── Step 1: Confirm X username ─────────────
-function confirmUsername() {
-    const input = document.getElementById('xUsernameInput');
-    if (!input) return;
-    let val = input.value.trim();
-    // Strip leading @
-    if (val.startsWith('@')) val = val.slice(1);
-    // Validate: 1-15 chars, alphanumeric + underscore
-    const valid = /^[A-Za-z0-9_]{1,15}$/.test(val);
-    if (!valid) {
-        showToast('Enter a valid X username (1-15 chars, letters/numbers/underscore)', 'error');
-        return;
+// ─── TASK 2 & 3: SOCIAL ACTIONS ───
+function doTask(action) {
+    if (action === 'follow') {
+        window.open('https://x.com/intent/follow?screen_name=PuccaDollz', '_blank');
+        state.tasks.follow = true;
+        markTaskDone('task2');
+        showToast('Follow opened! Completed task 2 ✅');
+    } else if (action === 'like') {
+        window.open('https://x.com/PuccaDollz', '_blank');
+        state.tasks.like = true;
+        showToast('Post opened! Like confirmed ♥');
+        if (state.tasks.repost) markTaskDone('task3');
+    } else if (action === 'repost') {
+        window.open('https://x.com/PuccaDollz', '_blank');
+        state.tasks.repost = true;
+        showToast('Repost confirmed 🔄');
+        if (state.tasks.like) markTaskDone('task3');
     }
-    state.xUsername = val;
-    markTask('username', true);
-    showToast(`Username @${val} confirmed ✓`, 'success');
+    checkAllTasks();
 }
 
-// ── Step 2/3: Social tasks ─────────────────
-const PINNED_TWEET_ID = 'PINNED_TWEET_ID'; // Replace with actual tweet ID
-
-function doTask(type) {
-    switch (type) {
-        case 'follow':
-            window.open('https://x.com/intent/follow?screen_name=PuccaDollz', '_blank');
-            markTask('follow', true);
-            showToast('Followed @PuccaDollz ✓', 'success');
-            break;
-        case 'like':
-            window.open(`https://x.com/intent/like?tweet_id=${PINNED_TWEET_ID}`, '_blank');
-            markTask('like', true);
-            showToast('Liked the pinned post ✓', 'success');
-            break;
-        case 'repost':
-            window.open(`https://x.com/intent/retweet?tweet_id=${PINNED_TWEET_ID}`, '_blank');
-            markTask('repost', true);
-            showToast('Reposted the pinned post ✓', 'success');
-            break;
-    }
-}
-
-// ── Step 4: Verify reply ───────────────────
+// ─── TASK 4: REPLY URL ───
 function verifyReply() {
-    const input = document.getElementById('replyUrl');
-    if (!input) return;
-    const url = input.value.trim();
-    if (!url || (!url.includes('x.com/') && !url.includes('twitter.com/'))) {
-        showToast('Paste a valid X / Twitter reply link', 'error');
+    const input = document.getElementById('replyUrlInput');
+    const url = (input?.value || '').trim();
+
+    if (!url) {
+        showToast('Paste the link to your reply tweet!');
         return;
     }
+
+    if (!url.includes('x.com/') && !url.includes('twitter.com/')) {
+        showToast('Must be a valid x.com status link');
+        return;
+    }
+
     state.replyUrl = url;
-    markTask('tag', true);
-    showToast('Reply verified ✓', 'success');
+    state.tasks.tag = true;
+    markTaskDone('task4');
+    showToast('Reply link verified! ✅');
+    checkAllTasks();
 }
 
-// ── Step 5: Wallet ─────────────────────────
+// ─── TASK 5: EVM WALLET ───
 function submitWallet() {
     const input = document.getElementById('walletInput');
-    if (!input) return;
-    const addr = input.value.trim();
-    if (!addr.startsWith('0x') || addr.length !== 42) {
-        showToast('Enter a valid EVM wallet address (0x… 42 chars)', 'error');
+    const val = (input?.value || '').trim();
+
+    if (!val) {
+        showToast('Please enter your EVM wallet address');
         return;
     }
-    state.wallet = addr;
-    markTask('wallet', true);
-    showToast('Wallet saved ✓', 'success');
+
+    if (!val.startsWith('0x') || val.length !== 42) {
+        showToast('Must be a valid 42-char EVM address (0x...)');
+        return;
+    }
+
+    state.wallet = val;
+    state.tasks.wallet = true;
+    markTaskDone('task5');
+    showToast('Wallet address saved! 👛');
+    checkAllTasks();
 }
 
-// ── Submit whitelist ───────────────────────
-async function submitWhitelist() {
-    if (!Object.values(state.tasks).every(Boolean)) {
-        showToast('Complete all tasks first!', 'error');
-        return;
+function markTaskDone(taskId) {
+    const card = document.getElementById(taskId);
+    if (card) {
+        card.classList.add('done');
     }
-    const btn = document.getElementById('submitAll');
-    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+}
+
+function checkAllTasks() {
+    const allDone = state.tasks.username &&
+                    state.tasks.follow &&
+                    state.tasks.like &&
+                    state.tasks.repost &&
+                    state.tasks.tag &&
+                    state.tasks.wallet;
+
+    const submitBtn = document.getElementById('submitAll');
+    if (submitBtn) {
+        submitBtn.disabled = !allDone;
+    }
+}
+
+// ─── SUBMIT APPLICATION ───
+async function submitWhitelist() {
+    const submitBtn = document.getElementById('submitAll');
+    if (submitBtn) submitBtn.disabled = true;
 
     try {
-        const res = await fetch('/api/whitelist', {
+        const res = await fetch(API_BASE + '/api/whitelist', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -237,21 +220,29 @@ async function submitWhitelist() {
                 tasks: state.tasks
             })
         });
+
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Submission failed');
-        showModal();
-        showToast('Whitelist application submitted! 🎉', 'success');
+
+        if (res.ok && data.success) {
+            const modal = document.getElementById('successModal');
+            if (modal) modal.classList.add('show');
+        } else {
+            showToast(data.error || 'Submission failed. Please check inputs.');
+            if (submitBtn) submitBtn.disabled = false;
+        }
     } catch (err) {
-        showToast(err.message || 'Something went wrong', 'error');
-        if (btn) { btn.disabled = false; btn.textContent = '🔥 Submit Whitelist Application 🔥'; }
+        console.error('Submit error:', err);
+        showToast('Server communication error. Try again.');
+        if (submitBtn) submitBtn.disabled = false;
     }
 }
 
-// ── Init ───────────────────────────────────
+function closeModal() {
+    const modal = document.getElementById('successModal');
+    if (modal) modal.classList.remove('show');
+}
+
+// ─── INIT ───
 document.addEventListener('DOMContentLoaded', () => {
-    initParticles();
-    initNavbar();
     initCountdown();
-    initScrollReveal();
-    initTilt();
 });
